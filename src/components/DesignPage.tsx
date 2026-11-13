@@ -304,6 +304,12 @@ export function DesignPage({
                     loading="lazy"
                     decoding="async"
                   />
+                  {poster.title && (
+                    <span className="touch-caption">
+                      <strong>{poster.title}</strong>
+                      {t(poster.event, lang) && <span>{t(poster.event, lang)}</span>}
+                    </span>
+                  )}
                 </article>
               )
             })

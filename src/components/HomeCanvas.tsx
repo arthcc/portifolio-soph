@@ -12,6 +12,9 @@ type HomeCanvasProps = {
 const MAX_ALIVE = 10
 const LINGER_MS = 350
 const FADE_MS = 800
+/** Touch screens: when nobody is touching, an image appears on its own this often. */
+const AUTOPLAY_MS = 750
+const AUTOPLAY_RESUME_MS = 1500
 
 /** Silent black canvas: the doodle in the middle, images trailing the cursor behind it. */
 export function HomeCanvas({ doodle, doodleAlt, images, spacing = 220 }: HomeCanvasProps) {
@@ -49,17 +52,45 @@ export function HomeCanvas({ doodle, doodleAlt, images, spacing = 220 }: HomeCan
       while (layer.childElementCount > MAX_ALIVE) layer.firstElementChild?.remove()
     }
 
+    // On phones a finger drag leaves the trail; spacing shrinks with the screen.
+    const gap = () => Math.min(spacing, window.innerWidth * 0.28)
+
+    let lastTouch = 0
+    const onMenu = (event: PointerEvent) =>
+      event.target instanceof Element && event.target.closest(".topbar") !== null
     const onMove = (event: PointerEvent) => {
-      if (reduced) return
+      if (reduced || onMenu(event)) return
+      if (event.pointerType === "touch") lastTouch = performance.now()
       const { clientX: x, clientY: y } = event
-      if (last && Math.hypot(x - last.x, y - last.y) < spacing) return
+      if (last && Math.hypot(x - last.x, y - last.y) < gap()) return
       last = { x, y }
       spawn(x, y)
     }
+    const onDown = (event: PointerEvent) => {
+      if (event.pointerType !== "touch" || reduced || onMenu(event)) return
+      lastTouch = performance.now()
+      last = { x: event.clientX, y: event.clientY }
+      spawn(event.clientX, event.clientY)
+    }
+
+    // Touch screens have no hover: play the trail by itself while idle.
+    let autoplay: number | undefined
+    if (!reduced && window.matchMedia("(hover: none)").matches) {
+      autoplay = window.setInterval(() => {
+        if (document.hidden || performance.now() - lastTouch < AUTOPLAY_RESUME_MS) return
+        if (document.querySelector("#main-nav.is-open")) return
+        const w = window.innerWidth
+        const h = window.innerHeight
+        spawn(w * (0.15 + Math.random() * 0.7), h * (0.18 + Math.random() * 0.68))
+      }, AUTOPLAY_MS)
+    }
 
     window.addEventListener("pointermove", onMove, { passive: true })
+    window.addEventListener("pointerdown", onDown, { passive: true })
     return () => {
       window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("pointerdown", onDown)
+      window.clearInterval(autoplay)
       layer.replaceChildren()
     }
   }, [images, spacing])

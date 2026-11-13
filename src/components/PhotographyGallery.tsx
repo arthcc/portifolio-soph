@@ -116,9 +116,12 @@ export function PhotographyGallery({
                   onPointerLeave={() => setHovered(null)}
                 >
                   <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
-                  <figcaption className="sr-only">
-                    {item.band} — {item.venue}
-                  </figcaption>
+                  {(item.band || item.venue) && (
+                    <figcaption className="touch-caption">
+                      {item.band && <strong>{item.band}</strong>}
+                      {item.venue && <span>{item.venue}</span>}
+                    </figcaption>
+                  )}
                 </figure>
               ))}
             </div>
