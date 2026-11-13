@@ -339,7 +339,7 @@ export function DesignPage({
 
       <CursorTooltip
         content={
-          hovered && !draggingId ? (
+          hovered && hovered.title && !draggingId ? (
             <>
               <strong>{hovered.title}</strong>
               <span>{t(hovered.event, lang)}</span>

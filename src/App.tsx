@@ -1,12 +1,10 @@
 import { useEffect, useState, type MouseEvent } from "react"
 import { AboutPage } from "./components/AboutPage"
-import { BrandBadge } from "./components/BrandBadge"
 import { CommunicationPage } from "./components/CommunicationPage"
 import { ContactPage } from "./components/ContactPage"
 import { DesignPage } from "./components/DesignPage"
-import { PhotoStack } from "./components/PhotoStack"
+import { HomeCanvas } from "./components/HomeCanvas"
 import { PhotographyGallery } from "./components/PhotographyGallery"
-import { Ticker } from "./components/Ticker"
 import { TopNavigation } from "./components/TopNavigation"
 import { portfolioContent, type Lang } from "./portfolioContent"
 
@@ -42,9 +40,7 @@ export default function App() {
     brand,
     navigation,
     ui,
-    badge,
-    stack,
-    ticker,
+    home,
     photography,
     communication,
     design,
@@ -121,18 +117,11 @@ export default function App() {
       ) : route === "about" ? (
         <AboutPage lang={lang} {...about} />
       ) : (
-        <>
-          <BrandBadge {...badge} />
-          <PhotoStack
-            initialItems={stack.items}
-            angles={stack.angles}
-            contactSheetImages={stack.contactSheetImages}
-            replacementLabel={stack.replacementLabel}
-          />
-          <Ticker items={ticker} />
-          <div id="comunicacao" hidden />
-          <div id="design" hidden />
-        </>
+        <HomeCanvas
+          doodle={home.doodle}
+          doodleAlt={home.doodleAlt}
+          images={home.trailImages}
+        />
       )}
     </main>
   )

@@ -1,76 +1,72 @@
 # sophia lino — portfólio
 
-Port da code base do Figma Make [Concert Photographer Portfolio](https://www.figma.com/make/GnTGeJPTisizYVVYsCPac6/Concert-Photographer-Portfolio)
-para um projeto Vite + React 19 + TypeScript standalone.
-
-O design não foi alterado: `src/index.css`, todos os componentes e
-`src/portfolioContent.ts` são cópias verbatim dos fontes do Make.
+Vite + React 19 + TypeScript. Site estático, deploy automático no Fly.io a cada push na `main`.
 
 ## Rodar
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
+npm run images     # gera as fotos para web a partir de media/originals (macOS)
 npm run build      # gera dist/
-npm run preview    # serve dist/
-npm run typecheck  # tsc --noEmit
+npm run typecheck
 ```
+
+## Fotos e cartazes
+
+Os arquivos originais (pesados) ficam em `media/originals/` — **fora do git e fora do site**.
+Cada pasta vira uma pilha automaticamente:
+
+```
+media/originals/
+  home/                    rastro de imagens do cursor na página inicial
+  fotografia/festivais/    pilha "festivais"
+  fotografia/shows/        pilha "shows"
+  fotografia/35mm/         pilha "35mm"
+  design/flyers/           pilha "flyers"
+  design/autorias/         pilha "autorias"
+```
+
+Para adicionar/trocar/remover: coloque ou apague o arquivo na pasta e rode `npm run images`.
+O script cria a versão web (máx. 2000px, JPEG 80) em `public/images/<mesma pasta>/` com nome
+em minúsculas-com-hífen e atualiza `src/mediaManifest.json`. Faça commit de `public/images/`
+e do manifesto.
+
+Legendas (banda / local, título do cartaz) ficam em `src/portfolioContent.ts`, nos mapas
+`photoCaptions` e `posterInfo`, usando o id do arquivo (ex.: `stereolab-02`). Foto sem
+legenda não mostra tooltip.
 
 ## Estrutura
 
 ```
-index.html
-src/
-  main.tsx              entrypoint React
-  App.tsx               roteamento por hash (#/fotografia, #/comunicacao, #/design)
-  index.css             todo o design: shells, stack, galeria, cartazes, responsivo
-  portfolioContent.ts   conteúdo + tipos (brand, nav, stack, gallery, communication, design)
-  components/
-    TopNavigation.tsx     topbar
-    BrandBadge.tsx        doodle + "barulho visual"
-    PhotoStack.tsx        pilha de fotos (scroll/teclado descarta, clique substitui)
-    StackArtwork.tsx      variantes photo / contact sheet / editorial
-    PhotographyGallery.tsx grid denso com legendas no hover
-    CommunicationPage.tsx  duas colunas + preview "darkroom" no hover
-    DesignPage.tsx        16 cartazes arrastáveis com tooltip + reset
 public/
   favicon.svg
-  sophia-lino-doodle.png
-  photos/sophia-crowd-01.jpg
+  brand/doodle.png          doodle branco (home, sobre mim)
+  images/…                  gerado por `npm run images` — não editar à mão
+scripts/optimize-images.mjs
+src/
+  App.tsx                   rotas por hash + idioma [pt / en]
+  portfolioContent.ts       todos os textos (pt/en), legendas e montagem das pilhas
+  mediaManifest.json        gerado
+  index.css                 estilos
+  components/
+    TopNavigation.tsx       menu + seletor de idioma
+    HomeCanvas.tsx          doodle + rastro de imagens
+    PhotographyGallery.tsx  pilhas de fotos → grid
+    CommunicationPage.tsx   duas colunas
+    DesignPage.tsx          pilhas de cartazes que se espalham, arrastáveis
+    ContactPage.tsx         credencial de imprensa + copiar e-mail
+    AboutPage.tsx           retrato + bio
+    CursorTooltip.tsx       caixinha que segue o cursor
 ```
 
 ## Rotas
 
-Hash-based, sem biblioteca de router:
-
-| Hash             | Tela                |
-| ---------------- | ------------------- |
-| (vazio)          | landing (badge + pilha de fotos) |
-| `#/fotografia`   | galeria             |
-| `#/comunicacao`  | comunicação         |
-| `#/design`       | cartazes            |
-
-## Diferenças em relação ao Make
-
-Nada visual — só o que era infraestrutura do próprio Make e não existe fora dele:
-
-- **`vite.config.ts`**: o original importava `./.figma/make/site.json` e registrava
-  cinco plugins internos do Figma (injeção de meta tags, replay do overlay de erro,
-  fallback de React Refresh, rota `/.figma/make/kit.html`, sourcemaps de pacotes
-  linkados). Nenhum desses arquivos vem no export. Ficaram apenas `react()`,
-  `tailwindcss()` e o alias `@ → ./src`.
-- **`index.html`**: os placeholders `<!-- figma:lang -->`, `<!-- figma:title -->` e
-  os slots de script eram preenchidos em build pelo plugin acima. Foram substituídos
-  por valores literais — `lang="pt-BR"`, título `sophia lino — barulho visual` e o
-  `<link rel="icon">`. Ajuste o título se o `site.json` do Make usava outro.
-- **`package.json`**: `name` passou de `figma-make-app` para `sophia-lino-portfolio`;
-  acrescentado o script `typecheck`. Dependências idênticas.
-- **`src/imports/_MG_6556.jpg`**: vinha no export mas nenhum fonte o referencia —
-  é o mesmo arquivo que `public/photos/sophia-crowd-01.jpg`. Mantido por fidelidade.
-
-## Imagens
-
-Só três assets são locais (`public/`). O resto das fotos, capas e cartazes aponta
-para URLs do Unsplash em `src/portfolioContent.ts`, exatamente como no Make — logo a
-galeria, a página de comunicação e a de design precisam de rede para renderizar.
-Para hospedar por conta própria, baixe os arquivos e troque as URLs naquele arquivo.
+| Hash            | Página       |
+| --------------- | ------------ |
+| (vazio)         | home         |
+| `#/fotografia`  | fotografia   |
+| `#/comunicacao` | comunicação  |
+| `#/design`      | design       |
+| `#/contato`     | contato      |
+| `#/sobre`       | sobre mim    |

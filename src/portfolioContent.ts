@@ -1,9 +1,22 @@
 /**
- * All site content lives here. To swap or add photos, posters or text,
- * edit the arrays below — nothing on the published site exposes upload UI.
+ * All site content lives here — nothing on the published site lets visitors
+ * upload or swap media.
+ *
+ * PHOTOS & POSTERS come from folders, not from this file:
+ *   1. drop the full-size file into media/originals/<folder>/
+ *        home/                     cursor trail on the home page
+ *        fotografia/festivais/     pile "festivais"
+ *        fotografia/shows/         pile "shows"
+ *        fotografia/35mm/          pile "35mm"
+ *        design/flyers/            pile "flyers"
+ *        design/autorias/          pile "autorias"
+ *   2. run `npm run images` (makes the web version + updates src/mediaManifest.json)
+ *   3. optionally add a caption below (photoCaptions / posterInfo), keyed by the
+ *      image id — the file name in lowercase-with-dashes, as listed in the manifest.
  *
  * Bilingual strings use `{ pt, en }`; read them with `t(value, lang)`.
  */
+import media from "./mediaManifest.json"
 
 export type Lang = "pt" | "en"
 export type Localized = { pt: string; en: string }
@@ -11,19 +24,10 @@ export type Localized = { pt: string; en: string }
 export const t = (value: Localized | string, lang: Lang) =>
   typeof value === "string" ? value : value[lang]
 
-export type ArtworkKind = "photo" | "contact" | "editorial"
+type MediaImage = { id: string; src: string; width: number; height: number }
 
-export type StackItem = {
-  id: string
-  kind: ArtworkKind
-  src?: string
-  alt: string
-  credit?: string
-  /** width / height of the card, so horizontal and vertical photos aren't cropped */
-  ratio: number
-  /** Handwritten caption shown under the top photo */
-  caption: { title: string; place: string }
-}
+const folder = (name: string): MediaImage[] =>
+  (media as Record<string, MediaImage[] | undefined>)[name] ?? []
 
 export type GalleryItem = {
   id: string
@@ -45,8 +49,6 @@ export type CommunicationItem = {
   title: string
   meta: Localized
   href: string
-  preview: string
-  previewAlt: Localized
 }
 
 export type PosterItem = {
@@ -63,98 +65,108 @@ export type PosterPile = {
   posters: readonly PosterItem[]
 }
 
-const concertOne = "/photos/web/sophia-crowd-01.jpg"
-const concertTwo =
-  "https://images.unsplash.com/photo-1782216574068-11d96a20fc09?auto=format&fit=crop&w=1800&q=90"
-const concertThree =
-  "https://images.unsplash.com/photo-1561986518-72ab9202cb72?auto=format&fit=crop&w=1800&q=90"
-const landing01 = "/photos/web/01.jpg"
-const landing02 = "/photos/web/02.jpg"
-const landing03 = "/photos/web/03.jpg"
-const landing04 = "/photos/web/04.jpg"
+/* ------------------------------------------------------------------
+   Captions (shown in the cursor tooltip). Key = image id.
+   ------------------------------------------------------------------ */
 
-const showItems = [
-  {
-    id: "crowd-01",
-    src: concertOne,
-    alt: "Público reunido em um show underground",
-    band: "magnólia",
-    venue: "hangar 110, são paulo",
-    format: "landscape",
+/**
+ * Captions come from the file name automatically ("winona-098" -> "winona").
+ * bandNames: full band name + festival/venue for every photo starting with that
+ *   name (e.g. all "winona-*" files).
+ * photoCaptions: band/venue for one specific photo (wins over bandNames).
+ * Camera-style names (edg01579, mg-0499) have no caption until you add one.
+ */
+type Caption = { band?: string; venue?: string }
+
+const bandNames: Record<string, Caption> = {
+  winona: { band: "Winona Riders", venue: "Balaclava Fest 2026" },
+  gab: { band: "Gab Ferreira", venue: "Balaclava Fest 2025" },
+  yolatengo: { band: "Yo La Tengo" },
+  ylt: { band: "Yo La Tengo" },
+}
+
+const photoCaptions: Record<string, Caption> = {
+  "sophia-crowd-01": { band: "magnólia", venue: "hangar 110, são paulo" },
+}
+
+/** Folders whose file names are film-roll/lab names, not bands. */
+const noAutoBand = new Set(["fotografia/35mm"])
+
+const CAMERA_NAME = /^(edg|mg|img|dsc|dscf|p)-?\d+$/
+
+const captionFromFileName = (id: string): Caption => {
+  if (CAMERA_NAME.test(id)) return {}
+  const base = id.replace(/-\d+$/, "")
+  return bandNames[base] ?? { band: base.replace(/-/g, " ") }
+}
+
+const posterInfo: Record<string, { title: string; event: Localized; alt: string }> = {
+  "poster-01": {
+    title: "iz fan fest",
+    event: { pt: "prévia shame / niceto bar", en: "shame pre-party / niceto bar" },
+    alt: "Cartaz do IZ Fan Fest com fotos da banda Shame",
   },
-  {
-    id: "stage-02",
-    src: "https://images.unsplash.com/photo-1573152958734-1922c188fba3?auto=format&fit=crop&w=1200&q=88",
-    alt: "Multidão vista durante um concerto",
-    band: "ruído/mm",
-    venue: "circo voador, rio de janeiro",
-    format: "square",
+  "poster-02": {
+    title: "repefest",
+    event: {
+      pt: "capote, morro fuji, quebec / são paulo",
+      en: "capote, morro fuji, quebec / são paulo",
+    },
+    alt: "Cartaz do Repefest com ilustração de um cachorro",
   },
-  {
-    id: "stage-03",
-    src: concertTwo,
-    alt: "Banda sob luzes fortes no palco",
-    band: "terceiro mundo",
-    venue: "casa da luz, são paulo",
-    format: "portrait",
+  "poster-03": {
+    title: "repefest halloween",
+    event: { pt: "camaleão cultural / curitiba", en: "camaleão cultural / curitiba" },
+    alt: "Cartaz do Repefest Halloween com ilustração de um lobo",
   },
-  {
-    id: "crowd-04",
-    src: "https://images.unsplash.com/photo-1534435147492-fa0d8d53eb9f?auto=format&fit=crop&w=1200&q=88",
-    alt: "Pessoa carregada pelo público durante um show",
-    band: "desvio",
-    venue: "galpão ladeira, belo horizonte",
-    format: "landscape",
+  "poster-04": {
+    title: "quem é você, alice? + turno noturno",
+    event: {
+      pt: "espaço cultural zepelim / brasília",
+      en: "espaço cultural zepelim / brasília",
+    },
+    alt: "Cartaz com luas sorridentes para Quem É Você, Alice? e Turno Noturno",
   },
-  {
-    id: "stage-05",
-    src: concertThree,
-    alt: "Artista cercado pelo público",
-    band: "menores atos",
-    venue: "audio rebel, rio de janeiro",
-    format: "portrait",
+  "poster-05": {
+    title: "repeteco de bolso: sorosoro",
+    event: { pt: "itiban comics / curitiba", en: "itiban comics / curitiba" },
+    alt: "Cartaz do Repeteco de Bolso com ilustração de gatinhos",
   },
-  {
-    id: "crowd-06",
-    src: "https://images.unsplash.com/photo-1522717887140-b78153b59e52?auto=format&fit=crop&w=1200&q=88",
-    alt: "Público em um concerto em preto e branco",
-    band: "cidade dormitório",
-    venue: "ocupa 9, porto alegre",
-    format: "square",
-  },
-  {
-    id: "stage-07",
-    src: "https://images.unsplash.com/photo-1603868418781-68a1d5222afe?auto=format&fit=crop&w=1200&q=88",
-    alt: "Vocalista em apresentação ao vivo",
-    band: "el toro fuerte",
-    venue: "fffront, são paulo",
-    format: "portrait",
-  },
-  {
-    id: "stage-08",
-    src: "https://images.unsplash.com/photo-1688658108886-7fff7b15cd68?auto=format&fit=crop&w=1200&q=88",
-    alt: "Guitarrista tocando ao vivo",
-    band: "test",
-    venue: "mister rock, belo horizonte",
-    format: "landscape",
-  },
-  {
-    id: "crowd-09",
-    src: "https://images.unsplash.com/photo-1748302913353-90a60a1cba9b?auto=format&fit=crop&w=1200&q=88",
-    alt: "Público sob as luzes de um show",
-    band: "terraplana",
-    venue: "ó do borogodó, curitiba",
-    format: "square",
-  },
-  {
-    id: "stage-10",
-    src: "https://images.unsplash.com/photo-1644786283596-5283bd41892a?auto=format&fit=crop&w=1200&q=88",
-    alt: "Grupo reunido em cima do palco",
-    band: "deafkids",
-    venue: "c6 fest, são paulo",
-    format: "landscape",
-  },
-] satisfies GalleryItem[]
+}
+
+/* ------------------------------------------------------------------ */
+
+const formatOf = ({ width, height }: MediaImage): GalleryItem["format"] => {
+  const ratio = width / height
+  return ratio > 1.15 ? "landscape" : ratio < 0.87 ? "portrait" : "square"
+}
+
+const photos = (name: string): GalleryItem[] =>
+  folder(name).map((image) => {
+    const caption =
+      photoCaptions[image.id] ?? (noAutoBand.has(name) ? {} : captionFromFileName(image.id))
+    const band = caption.band ?? ""
+    return {
+      id: image.id,
+      src: image.src,
+      alt: band ? `${band}, por sophia lino` : "fotografia por sophia lino",
+      band,
+      venue: caption.venue ?? "",
+      format: formatOf(image),
+    }
+  })
+
+const posters = (name: string): PosterItem[] =>
+  folder(name).map((image) => {
+    const info = posterInfo[image.id]
+    return {
+      id: image.id,
+      src: image.src,
+      alt: info?.alt ?? "cartaz por sophia lino",
+      title: info?.title ?? "",
+      event: info?.event ?? { pt: "", en: "" },
+    }
+  })
 
 export const portfolioContent = {
   brand: {
@@ -175,62 +187,12 @@ export const portfolioContent = {
     reshuffle: { pt: "embaralhar", en: "reshuffle" },
   },
 
-  /* ---------- home (unchanged) ---------- */
-  badge: {
-    label: "barulho visual",
-    image: "/logo---sop---branca.png",
-    imageAlt:
-      "Rosto desenhado à mão com óculos grandes e expressão indiferente",
-    intro: "fotografia de show, design e comunicação na cena independente.",
-    cta: { label: "ver arquivo →", href: "#/fotografia" },
+  /* ---------- home: doodle + cursor image trail ---------- */
+  home: {
+    doodle: "/brand/doodle.png",
+    doodleAlt: "rosto desenhado à mão com óculos redondos e cabelo bagunçado",
+    trailImages: folder("home").map((image) => image.src),
   },
-  stack: {
-    replacementLabel: "Clique para ampliar ou role para passar a foto",
-    angles: [-2.4, 1.6, -1.2, 2.7, -0.6],
-    items: [
-      {
-        id: "stage",
-        kind: "photo",
-        src: landing01,
-        alt: "Fotografia de show por Sophia Lino",
-        ratio: 3 / 2,
-        caption: { title: "magnólia", place: "hangar 110, são paulo" },
-      },
-      {
-        id: "contact",
-        kind: "contact",
-        alt: "Folha de contato com fotografias de show",
-        ratio: 4 / 3,
-        caption: { title: "folha de contato", place: "arquivo 35mm" },
-      },
-      {
-        id: "band",
-        kind: "photo",
-        src: landing02,
-        alt: "Fotografia de show por Sophia Lino",
-        ratio: 4 / 3,
-        caption: { title: "terceiro mundo", place: "casa da luz, são paulo" },
-      },
-      {
-        id: "live",
-        kind: "photo",
-        src: landing04,
-        alt: "Fotografia de show por Sophia Lino",
-        ratio: 3 / 2,
-        caption: { title: "deafkids", place: "c6 fest, são paulo" },
-      },
-      {
-        id: "crowd",
-        kind: "photo",
-        src: landing03,
-        alt: "Fotografia de show por Sophia Lino",
-        ratio: 3 / 2,
-        caption: { title: "menores atos", place: "audio rebel, rio de janeiro" },
-      },
-    ] satisfies StackItem[],
-    contactSheetImages: [landing01, landing02, landing03, landing04],
-  },
-  ticker: showItems.flatMap((item) => [item.band, item.venue]),
 
   /* ---------- fotografia ---------- */
   photography: {
@@ -239,59 +201,17 @@ export const portfolioContent = {
       {
         id: "festivais",
         label: { pt: "festivais", en: "festivals" },
-        items: [
-          {
-            id: "fest-01",
-            src: landing04,
-            alt: "Fotografia de show por Sophia Lino",
-            band: "deafkids",
-            venue: "c6 fest, são paulo",
-            format: "landscape",
-          },
-          showItems[9],
-          showItems[1],
-          {
-            id: "fest-02",
-            src: landing02,
-            alt: "Fotografia de show por Sophia Lino",
-            band: "terceiro mundo",
-            venue: "casa da luz, são paulo",
-            format: "landscape",
-          },
-          showItems[6],
-          showItems[5],
-        ],
+        items: photos("fotografia/festivais"),
       },
       {
         id: "shows",
         label: { pt: "shows", en: "gigs" },
-        items: showItems,
+        items: photos("fotografia/shows"),
       },
       {
         id: "35mm",
         label: { pt: "35mm", en: "35mm" },
-        items: [
-          {
-            id: "film-01",
-            src: landing01,
-            alt: "Fotografia de show por Sophia Lino",
-            band: "magnólia",
-            venue: "hangar 110, são paulo",
-            format: "portrait",
-          },
-          {
-            id: "film-02",
-            src: landing03,
-            alt: "Fotografia de show por Sophia Lino",
-            band: "menores atos",
-            venue: "audio rebel, rio de janeiro",
-            format: "landscape",
-          },
-          showItems[0],
-          showItems[2],
-          showItems[3],
-          showItems[4],
-        ],
+        items: photos("fotografia/35mm"),
       },
     ] satisfies PhotoPile[],
   },
@@ -307,27 +227,18 @@ export const portfolioContent = {
         title: "revista repeteco",
         meta: { pt: "direção de arte / editorial", en: "art direction / editorial" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1744280784099-3cf76ea878b4?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "página impressa", en: "printed page" },
       },
       {
         id: "interzine",
         title: "interzine brasil",
         meta: { pt: "gestão / cobertura", en: "management / coverage" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1573152958734-1922c188fba3?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "público em um concerto", en: "crowd at a gig" },
       },
       {
         id: "estranhos-encontros",
         title: "estranhos encontros: são paulo independent film festival",
         meta: { pt: "comunicação / social media", en: "communication / social media" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1659998502153-a7ea72880379?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "câmera analógica", en: "film camera" },
       },
     ] satisfies CommunicationItem[],
     articles: [
@@ -336,27 +247,18 @@ export const portfolioContent = {
         title: "mike kinsella",
         meta: { pt: "entrevista / mad sound", en: "interview / mad sound" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1595694548657-8e6f0d681f8a?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "máquina de escrever", en: "typewriter" },
       },
       {
         id: "naoko-yamano",
         title: "naoko yamano (shonen knife)",
         meta: { pt: "entrevista / mad sound", en: "interview / mad sound" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1612873003118-f0160ec93f4c?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "folha na máquina", en: "sheet in the typewriter" },
       },
       {
         id: "pulp-buenos-aires",
         title: "pulp em buenos aires",
         meta: { pt: "cobertura / wikimetal", en: "coverage / wikimetal" },
         href: "#/comunicacao",
-        preview:
-          "https://images.unsplash.com/photo-1731702981357-dbbe3ab354a8?auto=format&fit=crop&w=1000&q=88",
-        previewAlt: { pt: "mesa de redação", en: "writing desk" },
       },
     ] satisfies CommunicationItem[],
   },
@@ -364,58 +266,11 @@ export const portfolioContent = {
   /* ---------- design ---------- */
   design: {
     piles: [
-      {
-        id: "flyers",
-        label: { pt: "flyers", en: "flyers" },
-        posters: [
-          {
-            id: "poster-01",
-            src: "/photos/web/poster-01.jpg",
-            alt: "Cartaz do IZ Fan Fest com fotos da banda Shame",
-            title: "iz fan fest",
-            event: { pt: "prévia shame / niceto bar", en: "shame pre-party / niceto bar" },
-          },
-          {
-            id: "poster-02",
-            src: "/photos/web/poster-02.jpg",
-            alt: "Cartaz do Repefest com ilustração de um cachorro",
-            title: "repefest",
-            event: {
-              pt: "capote, morro fuji, quebec / são paulo",
-              en: "capote, morro fuji, quebec / são paulo",
-            },
-          },
-          {
-            id: "poster-03",
-            src: "/photos/web/poster-03.jpg",
-            alt: "Cartaz do Repefest Halloween com ilustração de um lobo",
-            title: "repefest halloween",
-            event: { pt: "camaleão cultural / curitiba", en: "camaleão cultural / curitiba" },
-          },
-        ],
-      },
+      { id: "flyers", label: { pt: "flyers", en: "flyers" }, posters: posters("design/flyers") },
       {
         id: "autorias",
         label: { pt: "autorias", en: "personal" },
-        posters: [
-          {
-            id: "poster-04",
-            src: "/photos/web/poster-04.jpg",
-            alt: "Cartaz com luas sorridentes para Quem É Você, Alice? e Turno Noturno",
-            title: "quem é você, alice? + turno noturno",
-            event: {
-              pt: "espaço cultural zepelim / brasília",
-              en: "espaço cultural zepelim / brasília",
-            },
-          },
-          {
-            id: "poster-05",
-            src: "/photos/web/poster-05.jpg",
-            alt: "Cartaz do Repeteco de Bolso com ilustração de gatinhos",
-            title: "repeteco de bolso: sorosoro",
-            event: { pt: "itiban comics / curitiba", en: "itiban comics / curitiba" },
-          },
-        ],
+        posters: posters("design/autorias"),
       },
     ] satisfies PosterPile[],
   },
@@ -438,7 +293,7 @@ export const portfolioContent = {
   /* ---------- sobre mim ---------- */
   about: {
     heading: { pt: "sobre mim", en: "about me" },
-    portrait: "/logo---sop---branca.png",
+    portrait: "/brand/doodle.png",
     portraitAlt: {
       pt: "autorretrato desenhado à mão de sophia lino",
       en: "hand-drawn self-portrait of sophia lino",

@@ -1,0 +1,278 @@
+{
+  "design/autorias": [
+    {
+      "id": "poster-04",
+      "src": "/images/design/autorias/poster-04.jpg",
+      "width": 1414,
+      "height": 2000
+    },
+    {
+      "id": "poster-05",
+      "src": "/images/design/autorias/poster-05.jpg",
+      "width": 1414,
+      "height": 2000
+    }
+  ],
+  "design/flyers": [
+    {
+      "id": "poster-01",
+      "src": "/images/design/flyers/poster-01.jpg",
+      "width": 1500,
+      "height": 2000
+    },
+    {
+      "id": "poster-02",
+      "src": "/images/design/flyers/poster-02.jpg",
+      "width": 1414,
+      "height": 2000
+    },
+    {
+      "id": "poster-03",
+      "src": "/images/design/flyers/poster-03.jpg",
+      "width": 1414,
+      "height": 2000
+    }
+  ],
+  "fotografia/35mm": [
+    {
+      "id": "analog-250d-sophia-de-souza-36",
+      "src": "/images/fotografia/35mm/analog-250d-sophia-de-souza-36.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "fuji400-patrick-galvao-04",
+      "src": "/images/fotografia/35mm/fuji400-patrick-galvao-04.jpg",
+      "width": 1325,
+      "height": 2000
+    },
+    {
+      "id": "fuji400-patrick-galvao-16",
+      "src": "/images/fotografia/35mm/fuji400-patrick-galvao-16.jpg",
+      "width": 1325,
+      "height": 2000
+    },
+    {
+      "id": "fuji400-patrick-galvao-19",
+      "src": "/images/fotografia/35mm/fuji400-patrick-galvao-19.jpg",
+      "width": 1326,
+      "height": 2000
+    },
+    {
+      "id": "fuji400-patrick-galvao-21",
+      "src": "/images/fotografia/35mm/fuji400-patrick-galvao-21.jpg",
+      "width": 1325,
+      "height": 2000
+    },
+    {
+      "id": "fuji400-patrick-galvao-31",
+      "src": "/images/fotografia/35mm/fuji400-patrick-galvao-31.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "lab-bom-sophia-dias-de-souza-16",
+      "src": "/images/fotografia/35mm/lab-bom-sophia-dias-de-souza-16.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "lab-bom-sophia-dias-de-souza-22",
+      "src": "/images/fotografia/35mm/lab-bom-sophia-dias-de-souza-22.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "era-uma-vez-sophia-dias-de-souza-34",
+      "src": "/images/fotografia/35mm/era-uma-vez-sophia-dias-de-souza-34.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "west-lab-sophia-dias-de-souza-22",
+      "src": "/images/fotografia/35mm/west-lab-sophia-dias-de-souza-22.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "recife-24p-sophia-de-souza-5",
+      "src": "/images/fotografia/35mm/recife-24p-sophia-de-souza-5.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "recife-24p-sophia-de-souza-7",
+      "src": "/images/fotografia/35mm/recife-24p-sophia-de-souza-7.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "recife-24p-sophia-de-souza-18",
+      "src": "/images/fotografia/35mm/recife-24p-sophia-de-souza-18.jpg",
+      "width": 2000,
+      "height": 1326
+    },
+    {
+      "id": "recife-24p-sophia-de-souza-26",
+      "src": "/images/fotografia/35mm/recife-24p-sophia-de-souza-26.jpg",
+      "width": 2000,
+      "height": 1326
+    }
+  ],
+  "fotografia/festivais": [
+    {
+      "id": "mg-0499",
+      "src": "/images/fotografia/festivais/mg-0499.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "mg-0551",
+      "src": "/images/fotografia/festivais/mg-0551.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "mg-1201",
+      "src": "/images/fotografia/festivais/mg-1201.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "mg-2326",
+      "src": "/images/fotografia/festivais/mg-2326.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "mg-2402",
+      "src": "/images/fotografia/festivais/mg-2402.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "edg01579",
+      "src": "/images/fotografia/festivais/edg01579.jpg",
+      "width": 1501,
+      "height": 2000
+    },
+    {
+      "id": "edg01965",
+      "src": "/images/fotografia/festivais/edg01965.jpg",
+      "width": 1500,
+      "height": 2000
+    },
+    {
+      "id": "edg02483",
+      "src": "/images/fotografia/festivais/edg02483.jpg",
+      "width": 1500,
+      "height": 2000
+    },
+    {
+      "id": "edg02631",
+      "src": "/images/fotografia/festivais/edg02631.jpg",
+      "width": 1500,
+      "height": 2000
+    },
+    {
+      "id": "gab-21",
+      "src": "/images/fotografia/festivais/gab-21.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "greep-06",
+      "src": "/images/fotografia/festivais/greep-06.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "greep-20",
+      "src": "/images/fotografia/festivais/greep-20.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "stereolab-01",
+      "src": "/images/fotografia/festivais/stereolab-01.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "stereolab-02",
+      "src": "/images/fotografia/festivais/stereolab-02.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "winona-098",
+      "src": "/images/fotografia/festivais/winona-098.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "winona-114",
+      "src": "/images/fotografia/festivais/winona-114.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "ylt-3",
+      "src": "/images/fotografia/festivais/ylt-3.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "yolatengo-09",
+      "src": "/images/fotografia/festivais/yolatengo-09.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "yolatengo",
+      "src": "/images/fotografia/festivais/yolatengo.jpg",
+      "width": 1333,
+      "height": 2000
+    }
+  ],
+  "fotografia/shows": [
+    {
+      "id": "mg-0821",
+      "src": "/images/fotografia/shows/mg-0821.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "sophia-crowd-01",
+      "src": "/images/fotografia/shows/sophia-crowd-01.jpg",
+      "width": 2000,
+      "height": 1333
+    }
+  ],
+  "home": [
+    {
+      "id": "01",
+      "src": "/images/home/01.jpg",
+      "width": 1333,
+      "height": 2000
+    },
+    {
+      "id": "02",
+      "src": "/images/home/02.jpg",
+      "width": 2000,
+      "height": 1500
+    },
+    {
+      "id": "03",
+      "src": "/images/home/03.jpg",
+      "width": 2000,
+      "height": 1333
+    },
+    {
+      "id": "04",
+      "src": "/images/home/04.jpg",
+      "width": 2000,
+      "height": 1333
+    }
+  ]
+}

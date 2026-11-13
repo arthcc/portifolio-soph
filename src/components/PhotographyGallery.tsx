@@ -12,6 +12,8 @@ type PhotographyGalleryProps = {
 type Phase = "piles" | "leaving" | "open"
 
 const PILE_ANGLES = [-6, 4, -2]
+/** Piles shown as a uniform grid, 4 photos per row. */
+const FOUR_PER_ROW = new Set(["festivais", "shows"])
 
 export function PhotographyGallery({
   lang,
@@ -103,7 +105,7 @@ export function PhotographyGallery({
               </button>
               <h1>{t(pile.label, lang)}</h1>
             </div>
-            <div className="gallery-grid">
+            <div className={`gallery-grid ${FOUR_PER_ROW.has(pile.id) ? "gallery-grid--four" : ""}`}>
               {pile.items.map((item) => (
                 <figure
                   className={`gallery-item gallery-item--${item.format}`}
@@ -125,7 +127,7 @@ export function PhotographyGallery({
       )}
       <CursorTooltip
         content={
-          hovered ? (
+          hovered && (hovered.band || hovered.venue) ? (
             <>
               <strong>{hovered.band}</strong>
               <span>{hovered.venue}</span>

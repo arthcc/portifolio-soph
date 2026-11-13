@@ -7,3 +7,6 @@ dist-ssr
 .idea
 .claude/settings.local.json
 vite.config 2.ts
+
+# full-size originals (web versions live in public/images via `npm run images`)
+media/originals/
