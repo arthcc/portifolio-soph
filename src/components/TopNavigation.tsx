@@ -1,20 +1,29 @@
+import { useEffect, useState, type MouseEvent } from "react"
+import { t, type Lang, type Localized } from "../portfolioContent"
+
 type NavigationItem = {
-  label: string
+  label: Localized
   href: string
 }
 
 type TopNavigationProps = {
+  lang: Lang
+  onLangChange: (lang: Lang) => void
   brand: string
   homeHref: string
   items: readonly NavigationItem[]
+  menuLabels: { open: Localized; close: Localized }
   activeHref?: string
   onNavigate?: (href: string, event: MouseEvent<HTMLAnchorElement>) => void
 }
 
 export function TopNavigation({
+  lang,
+  onLangChange,
   brand,
   homeHref,
   items,
+  menuLabels,
   activeHref,
   onNavigate,
 }: TopNavigationProps) {
@@ -34,6 +43,30 @@ export function TopNavigation({
     onNavigate?.(href, event)
   }
 
+  const switcher = (
+    <span className="lang-switch" role="group" aria-label="idioma / language">
+      [
+      <button
+        type="button"
+        className={lang === "pt" ? "is-active" : undefined}
+        aria-pressed={lang === "pt"}
+        onClick={() => onLangChange("pt")}
+      >
+        pt
+      </button>
+      /
+      <button
+        type="button"
+        className={lang === "en" ? "is-active" : undefined}
+        aria-pressed={lang === "en"}
+        onClick={() => onLangChange("en")}
+      >
+        en
+      </button>
+      ]
+    </span>
+  )
+
   return (
     <header className="topbar">
       <a
@@ -44,35 +77,38 @@ export function TopNavigation({
       >
         {brand}
       </a>
-      <button
-        className="menu-toggle"
-        type="button"
-        aria-expanded={menuOpen}
-        aria-controls="main-nav"
-        onClick={() => setMenuOpen((open) => !open)}
-      >
-        {menuOpen ? "fechar ×" : "menu"}
-      </button>
+      <div className="topbar-mobile-actions">
+        {switcher}
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-expanded={menuOpen}
+          aria-controls="main-nav"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? t(menuLabels.close, lang) : t(menuLabels.open, lang)}
+        </button>
+      </div>
       <nav
         id="main-nav"
         className={menuOpen ? "is-open" : undefined}
-        aria-label="Navegação principal"
+        aria-label={lang === "pt" ? "Navegação principal" : "Main navigation"}
       >
         {items.map((item, index) => (
-          <span className="nav-item" key={item.label}>
+          <span className="nav-item" key={item.href}>
             <a
               className={item.href === activeHref ? "is-active" : undefined}
               href={item.href}
               aria-current={item.href === activeHref ? "page" : undefined}
               onClick={(event) => navigate(item.href, event)}
             >
-              {item.label}
+              {t(item.label, lang)}
             </a>
             {index < items.length - 1 && <span aria-hidden="true">-</span>}
           </span>
         ))}
+        <span className="nav-switch">{switcher}</span>
       </nav>
     </header>
   )
 }
-import { useEffect, useState, type MouseEvent } from "react"

@@ -1,23 +1,58 @@
 import { useEffect, useState, type MouseEvent } from "react"
+import { AboutPage } from "./components/AboutPage"
 import { BrandBadge } from "./components/BrandBadge"
 import { CommunicationPage } from "./components/CommunicationPage"
+import { ContactPage } from "./components/ContactPage"
 import { DesignPage } from "./components/DesignPage"
 import { PhotoStack } from "./components/PhotoStack"
 import { PhotographyGallery } from "./components/PhotographyGallery"
 import { Ticker } from "./components/Ticker"
 import { TopNavigation } from "./components/TopNavigation"
-import { portfolioContent } from "./portfolioContent"
+import { portfolioContent, type Lang } from "./portfolioContent"
+
+type Route = "home" | "gallery" | "communication" | "design" | "contact" | "about"
+
+const ROUTES: Record<string, Route> = {
+  "#/fotografia": "gallery",
+  "#/comunicacao": "communication",
+  "#/design": "design",
+  "#/contato": "contact",
+  "#/sobre": "about",
+}
+
+const HREFS = Object.fromEntries(
+  Object.entries(ROUTES).map(([href, route]) => [route, href]),
+) as Partial<Record<Route, string>>
+
+const getRoute = (): Route => ROUTES[window.location.hash] ?? "home"
+
+const LANG_KEY = "sophia-lino-lang"
+const getInitialLang = (): Lang => {
+  try {
+    const saved = localStorage.getItem(LANG_KEY)
+    if (saved === "pt" || saved === "en") return saved
+  } catch {
+    /* storage unavailable */
+  }
+  return navigator.language?.toLowerCase().startsWith("pt") ? "pt" : "en"
+}
 
 export default function App() {
-  const { brand, navigation, badge, stack, gallery, communication, design } =
-    portfolioContent
-  const getRoute = () => {
-    if (window.location.hash === "#/fotografia") return "gallery"
-    if (window.location.hash === "#/comunicacao") return "communication"
-    if (window.location.hash === "#/design") return "design"
-    return "home"
-  }
+  const {
+    brand,
+    navigation,
+    ui,
+    badge,
+    stack,
+    ticker,
+    photography,
+    communication,
+    design,
+    contact,
+    about,
+  } = portfolioContent
   const [route, setRoute] = useState(getRoute)
+  const [lang, setLang] = useState<Lang>(getInitialLang)
   const [designLeaving, setDesignLeaving] = useState(false)
 
   useEffect(() => {
@@ -25,6 +60,15 @@ export default function App() {
     window.addEventListener("hashchange", updateRoute)
     return () => window.removeEventListener("hashchange", updateRoute)
   }, [])
+
+  useEffect(() => {
+    document.documentElement.lang = lang === "pt" ? "pt-BR" : "en"
+    try {
+      localStorage.setItem(LANG_KEY, lang)
+    } catch {
+      /* storage unavailable */
+    }
+  }, [lang])
 
   const handleNavigate = (
     href: string,
@@ -41,38 +85,41 @@ export default function App() {
     }, 260)
   }
 
-  const shellClass =
-    route === "gallery"
-      ? "gallery-shell"
-      : route === "communication"
-        ? "communication-shell"
-        : route === "design"
-          ? "design-shell"
-          : "landing-shell"
+  const shellClass = route === "home" ? "landing-shell" : `${route}-shell page-shell`
 
   return (
     <main className={shellClass}>
       <TopNavigation
+        lang={lang}
+        onLangChange={setLang}
         brand={brand.name}
         homeHref={brand.homeHref}
         items={navigation}
-        activeHref={
-          route === "gallery"
-            ? "#/fotografia"
-            : route === "communication"
-              ? "#/comunicacao"
-              : route === "design"
-                ? "#/design"
-                : undefined
-        }
+        menuLabels={{ open: ui.menuOpen, close: ui.menuClose }}
+        activeHref={HREFS[route]}
         onNavigate={handleNavigate}
       />
       {route === "gallery" ? (
-        <PhotographyGallery label={gallery.label} items={gallery.items} />
+        <PhotographyGallery
+          lang={lang}
+          label={photography.label}
+          piles={photography.piles}
+          backLabel={ui.back}
+        />
       ) : route === "communication" ? (
-        <CommunicationPage {...communication} />
+        <CommunicationPage lang={lang} {...communication} />
       ) : route === "design" ? (
-        <DesignPage {...design} leaving={designLeaving} />
+        <DesignPage
+          lang={lang}
+          piles={design.piles}
+          backLabel={ui.back}
+          reshuffleLabel={ui.reshuffle}
+          leaving={designLeaving}
+        />
+      ) : route === "contact" ? (
+        <ContactPage lang={lang} {...contact} />
+      ) : route === "about" ? (
+        <AboutPage lang={lang} {...about} />
       ) : (
         <>
           <BrandBadge {...badge} />
@@ -82,9 +129,7 @@ export default function App() {
             contactSheetImages={stack.contactSheetImages}
             replacementLabel={stack.replacementLabel}
           />
-          <Ticker
-            items={gallery.items.flatMap((item) => [item.band, item.venue])}
-          />
+          <Ticker items={ticker} />
           <div id="comunicacao" hidden />
           <div id="design" hidden />
         </>
